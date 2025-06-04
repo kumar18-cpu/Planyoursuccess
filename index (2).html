@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plan Your Day</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@500&family=Quicksand&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #f2f6fa;
+      padding: 20px;
+      color: #2c3e50;
+    }
+
+    .animated-title {
+      text-align: center;
+      font-size: 2rem;
+      font-family: 'Pacifico', cursive;
+      margin-bottom: 20px;
+    }
+
+    .strike {
+      text-decoration: line-through;
+      color: #e74c3c;
+      transition: all 0.8s ease-in-out;
+    }
+
+    .success {
+      color: #27ae60;
+      font-weight: bold;
+      display: inline-block;
+      margin-left: 8px;
+      opacity: 0;
+      transform: translateY(-10px);
+      animation: fadeInSuccess 1s ease-in-out 1.5s forwards;
+    }
+
+    @keyframes fadeInSuccess {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .date-picker, .mood-tracker {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    .date-picker input {
+      padding: 8px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .mood-tracker span {
+      font-size: 1.5rem;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+
+    .mood-tracker button {
+      margin-top: 10px;
+      padding: 6px 12px;
+      background: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .category-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .category-buttons button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: white;
+    }
+
+    .work { background: #3498db; }
+    .study { background: #8e44ad; }
+    .fitness { background: #27ae60; }
+    .relaxation { background: #16a085; }
+    .wasting { background: #e74c3c; }
+    .travel { background: #2980b9; }
+    .food { background: #f39c12; }
+    .social { background: #9b59b6; }
+
+    .scheduler {
+      max-width: 600px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hour-block {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 10px;
+      border-left: 6px solid transparent;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .hour-label {
+      width: 70px;
+      font-weight: 600;
+    }
+
+    .hour-content {
+      flex: 1;
+      font-family: 'Quicksand', sans-serif;
+      padding: 0 10px;
+    }
+
+    .edit-btn {
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      background: #7f8c8d;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .popup {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 320px;
+      text-align: center;
+    }
+
+    .popup input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .popup button {
+      margin-top: 15px;
+      padding: 8px 16px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .buttons-bottom {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .buttons-bottom button {
+      margin: 5px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .export { background: #2ecc71; color: white; }
+    .clear { background: #e74c3c; color: white; }
+
+    .summary {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-family: 'Quicksand', sans-serif;
+      white-space: pre-wrap;
+    }
+
+    .block-work { border-left-color: #3498db; }
+    .block-study { border-left-color: #8e44ad; }
+    .block-fitness { border-left-color: #27ae60; }
+    .block-relaxation { border-left-color: #16a085; }
+    .block-wasting { border-left-color: #e74c3c; }
+    .block-travel { border-left-color: #2980b9; }
+    .block-food { border-left-color: #f39c12; }
+    .block-social { border-left-color: #9b59b6; }
+
+    @media (max-width: 480px) {
+      .animated-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="animated-title">
+    Plan your <span class="strike">day</span><span class="success">success</span>
+  </div>
+
+  <div class="date-picker">
+    <label>Select a date: </label>
+    <input type="date" id="selectedDate">
+  </div>
+
+  <div class="mood-tracker" id="moodSection" style="display: none;">
+    <label>Your Mood Today:</label><br/>
+    <span onclick="setMood('😊')">😊</span>
+    <span onclick="setMood('😐')">😐</span>
+    <span onclick="setMood('😢')">😢</span>
+    <span onclick="setMood('😡')">😡</span>
+    <span onclick="setMood('😎')">😎</span><br/>
+    <button onclick="resetMood()" id="resetMoodBtn" style="display:none;">Change Mood</button>
+  </div>
+
+  <div class="category-buttons" id="categoryButtons" style="display: none;">
+    <button class="work" onclick="setCategory('work')">Work</button>
+    <button class="study" onclick="setCategory('study')">Study</button>
+    <button class="fitness" onclick="setCategory('fitness')">Fitness</button>
+    <button class="relaxation" onclick="setCategory('relaxation')">Relaxation</button>
+    <button class="wasting" onclick="setCategory('wasting')">Wasting Time</button>
+    <button class="travel" onclick="setCategory('travel')">Travel</button>
+    <button class="food" onclick="setCategory('food')">Food</button>
+    <button class="social" onclick="setCategory('social')">Social Activity</button>
+  </div>
+
+  <div class="scheduler" id="scheduler"></div>
+  <div id="popup-container"></div>
+
+  <div class="buttons-bottom" id="controls" style="display: none;">
+    <button class="clear" onclick="clearSchedule()">Clear All</button>
+    <button class="export" onclick="exportSummary()">Export Summary</button>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <script>
+    let selectedCategory = 'work';
+    let selectedDate = '';
+    let plannerData = {};
+
+    const scheduler = document.getElementById('scheduler');
+    const popupContainer = document.getElementById('popup-container');
+    const summaryDiv = document.getElementById('summary');
+
+    document.getElementById('selectedDate').addEventListener('change', function () {
+      selectedDate = this.value;
+      if (selectedDate) {
+        document.getElementById('moodSection').style.display = 'block';
+        document.getElementById('categoryButtons').style.display = 'flex';
+        document.getElementById('controls').style.display = 'block';
+        loadData();
+        renderScheduler();
+      }
+    });
+
+    function loadData() {
+      const saved = JSON.parse(localStorage.getItem('plannerData')) || {};
+      plannerData = saved[selectedDate] || { mood: '', schedule: {} };
+    }
+
+    function saveData() {
+      const allData = JSON.parse(localStorage.getItem('plannerData')) || {};
+      allData[selectedDate] = plannerData;
+      localStorage.setItem('plannerData', JSON.stringify(allData));
+    }
+
+    function setMood(mood) {
+      plannerData.mood = mood;
+      saveData();
+
+      const emojis = document.querySelectorAll('#moodSection span');
+      emojis.forEach(emoji => {
+        if (emoji.textContent === mood) {
+          emoji.style.fontSize = '2rem';
+          emoji.style.pointerEvents = 'none';
+        } else {
+          emoji.style.display = 'none';
+        }
+      });
+      document.getElementById('resetMoodBtn').style.display = 'inline-block';
+    }
+
+    function resetMood() {
+      plannerData.mood = '';
+      saveData();
+      const emojis = document.querySelectorAll('#moodSection span');
+      emojis.forEach(emoji => {
+        emoji.style.display = 'inline';
+        emoji.style.pointerEvents = 'auto';
+        emoji.style.fontSize = '1.5rem';
+      });
+      document.getElementById('resetMoodBtn').style.display = 'none';
+    }
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+    }
+
+    function renderScheduler() {
+      scheduler.innerHTML = '';
+      for (let i = 0; i < 24; i++) {
+        const hour = `${i.toString().padStart(2, '0')}:00`;
+        const block = document.createElement('div');
+        block.className = 'hour-block';
+
+        const label = document.createElement('div');
+        label.className = 'hour-label';
+        label.textContent = hour;
+
+        const content = document.createElement('div');
+        content.className = 'hour-content';
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = 'Edit';
+
+        const data = plannerData.schedule[hour];
+        if (data) {
+          block.classList.add(`block-${data.category}`);
+          content.textContent = `${capitalize(data.category)}${data.task ? ': ' + data.task : ''}`;
+          block.onclick = () => {};
+          editBtn.onclick = () => openPopup(hour);
+        } else {
+          block.onclick = () => assignCategory(hour);
+          editBtn.style.display = 'none';
+        }
+
+        block.appendChild(label);
+        block.appendChild(content);
+        block.appendChild(editBtn);
+        scheduler.appendChild(block);
+      }
+    }
+
+    function capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function assignCategory(hour) {
+      plannerData.schedule[hour] = { category: selectedCategory, task: '' };
+      saveData();
+      renderScheduler();
+    }
+
+    function openPopup(hour) {
+      const overlay = document.createElement('div');
+      overlay.className = 'popup-overlay';
+      overlay.innerHTML = `
+        <div class="popup">
+          <h3>${hour} - ${capitalize(plannerData.schedule[hour].category)}</h3>
+          <input id="taskInput" placeholder="Enter task...">
+          <button onclick="saveTask('${hour}')">Save</button>
+        </div>
+      `;
+      popupContainer.innerHTML = '';
+      popupContainer.appendChild(overlay);
+    }
+
+    function saveTask(hour) {
+      const input = document.getElementById('taskInput').value.trim();
+      if (plannerData.schedule[hour]) {
+        plannerData.schedule[hour].task = input;
+        saveData();
+        renderScheduler();
+        popupContainer.innerHTML = '';
+      }
+    }
+
+    function clearSchedule() {
+      if (confirm("Clear all tasks for this day?")) {
+        plannerData = { mood: '', schedule: {} };
+        saveData();
+        renderScheduler();
+        summaryDiv.innerHTML = '';
+        resetMood();
+      }
+    }
+
+    function exportSummary() {
+      let text = `Summary for ${selectedDate}\nMood: ${plannerData.mood || 'Not set'}\n\n`;
+      for (const hour in plannerData.schedule) {
+        const entry = plannerData.schedule[hour];
+        text += `${hour} - ${capitalize(entry.category)}: ${entry.task || 'No detail'}\n`;
+      }
+      summaryDiv.textContent = text || 'No tasks planned.';
+    }
+  </script>
+
+</body>
+</html>
